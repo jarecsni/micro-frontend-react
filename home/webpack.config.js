@@ -2,6 +2,7 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 const Dotenv = require('dotenv-webpack');
 const deps = require("./package.json").dependencies;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = (_, argv) => ({
   output: {
     publicPath: "http://localhost:3000/",
@@ -44,7 +45,10 @@ module.exports = (_, argv) => ({
       name: "home",
       filename: "remoteEntry.js",
       remotes: {},
-      exposes: {},
+      exposes: {
+        "./Header": "./src/Header.tsx",
+        "./Footer": "./src/Footer.tsx"
+      },
       shared: {
         ...deps,
         react: {
@@ -60,6 +64,9 @@ module.exports = (_, argv) => ({
     new HtmlWebPackPlugin({
       template: "./src/index.html",
     }),
-    new Dotenv()
+    new Dotenv(),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+    }),
   ],
 });
